@@ -95,6 +95,10 @@
         }
     }
 
+    function panic() {
+        delta = 0;
+    }
+
     function drawTile(row, col, color) {
         ctx.fillStyle = color;
         ctx.fillRect(row * tileSize, col * tileSize, tileSize, tileSize);
@@ -177,9 +181,14 @@
         lastFrameTimeMs = timestamp;
 
         // Simulate the total elapsed time in fixed-size chunks
+        var numUpdateSteps = 0;
         while (delta >= timestep) {
             update(timestep);
             delta -= timestep;
+            if (++numUpdateSteps >= 240) {
+                panic();
+                break;
+            }
         }
         draw();
         requestAnimationFrame(mainLoop);
