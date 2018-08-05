@@ -1,0 +1,145 @@
+<canvas id="gc" width="400" height="400"></canvas>
+<script>
+    window.onload = function () {
+        canv = document.getElementById("gc");
+        ctx = canv.getContext("2d");
+        document.addEventListener("keydown", keyPush);
+        setInterval(game, 1000 / 15);
+    }
+
+    player = {
+        x: 0,
+        y: 0,
+        xv: 0,
+        yv: 0,
+        last_xv: 1,
+        last_yv: 0,
+        updatePosition: function () {
+            this.x += this.xv;
+            this.y += this.yv;
+            if (this.x < 0) {
+                this.x = tileCount - 1;
+            }
+            if (this.y < 0) {
+                this.y = tileCount - 1;
+            }
+            if (this.x >= tileCount) {
+                this.x = 0;
+            }
+            if (this.y >= tileCount) {
+                this.y = 0;
+            }
+        },
+        rememberPosition: function () {
+            this.last_xv = this.xv;
+            this.last_yv = this.yv;
+        }
+    };
+
+    enemy = {
+        x: 10,
+        y: 10
+    };
+
+    arrows = [];
+
+    tileCount = 20;
+    tileSize = 20;
+
+    function game() {
+        update();
+        draw();
+    }
+
+    function update() {
+        player.updatePosition();
+        player.xv = 0; player.yv = 0;
+
+        for (var i = 0; i < arrows.length; i++) {
+            arrows[i].updatePosition();
+        }
+
+        if (collide(player, enemy)) {
+            enemy.x = Math.floor(Math.random() * tileCount);
+            enemy.y = Math.floor(Math.random() * tileCount);
+        }
+    }
+
+    function collide(a, b) {
+        return a.x == b.x && a.y == b.y;
+    }
+
+    function draw() {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canv.width, canv.height);
+
+        // ctx.fillStyle = "white";
+        // ctx.font = "30px Arial";
+        // ctx.fillText(player.last_xv, 20, 50);
+        // ctx.fillText(player.last_yv, 20, 80);
+
+        drawTile(player.x, player.y, "lime");
+        drawTile(enemy.x, enemy.y, "red");
+
+        for (var i = 0; i < arrows.length; i++) {
+            drawTile(arrows[i].x, arrows[i].y, "yellow");
+        }
+    }
+
+    function drawTile(row, col, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(row * tileSize, col * tileSize, tileSize, tileSize);
+    }
+
+    function createArrow(row, col, xv, yv) {
+        var arrow = {
+            x: row,
+            y: col,
+            xv: xv,
+            yv: yv,
+            updatePosition: function () {
+                this.x += this.xv;
+                this.y += this.yv;
+                if (this.x < 0) {
+                    this.x = tileCount - 1;
+                }
+                if (this.y < 0) {
+                    this.y = tileCount - 1;
+                }
+                if (this.x >= tileCount) {
+                    this.x = 0;
+                }
+                if (this.y >= tileCount) {
+                    this.y = 0;
+                }
+            }
+        };
+
+        return arrow;
+    }
+
+    function keyPush(event) {
+        switch (event.code) {
+            case "ArrowLeft":
+                player.xv = -1; player.yv = 0;
+                player.rememberPosition();
+                break;
+            case "ArrowUp":
+                player.xv = 0; player.yv = -1;
+                player.rememberPosition();
+                break;
+            case "ArrowRight":
+                player.xv = 1; player.yv = 0;
+                player.rememberPosition();
+                break;
+            case "ArrowDown":
+                player.xv = 0; player.yv = 1;
+                player.rememberPosition();
+                break;
+            case "Space":
+                var arrow = createArrow(player.x, player.y, player.last_xv, player.last_yv);
+                arrows.push(arrow);
+                break;
+        }
+    }
+</script>
