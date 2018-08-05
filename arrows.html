@@ -3,7 +3,8 @@
     window.onload = function () {
         canv = document.getElementById("gc");
         ctx = canv.getContext("2d");
-        document.addEventListener("keydown", keyPush);
+        document.addEventListener("keydown", keyDown);
+        document.addEventListener("keyup", keyUp);
         setInterval(game, 1000 / 15);
     }
 
@@ -30,9 +31,16 @@
                 this.y = 0;
             }
         },
-        rememberPosition: function () {
+        setDirection: function (xv, yv) {
+            player.xv = xv; player.yv = yv;
             this.last_xv = this.xv;
             this.last_yv = this.yv;
+        },
+        stopX: function () {
+            player.xv = 0;
+        },
+        stopY: function () {
+            player.yv = 0;
         }
     };
 
@@ -53,7 +61,6 @@
 
     function update() {
         player.updatePosition();
-        player.xv = 0; player.yv = 0;
 
         for (var i = 0; i < arrows.length; i++) {
             arrows[i].updatePosition();
@@ -118,27 +125,40 @@
         return arrow;
     }
 
-    function keyPush(event) {
+    function keyDown(event) {
         switch (event.code) {
             case "ArrowLeft":
-                player.xv = -1; player.yv = 0;
-                player.rememberPosition();
+                player.setDirection(-1, 0);
                 break;
             case "ArrowUp":
-                player.xv = 0; player.yv = -1;
-                player.rememberPosition();
+                player.setDirection(0, -1);
                 break;
             case "ArrowRight":
-                player.xv = 1; player.yv = 0;
-                player.rememberPosition();
+                player.setDirection(1, 0);
                 break;
             case "ArrowDown":
-                player.xv = 0; player.yv = 1;
-                player.rememberPosition();
+                player.setDirection(0, 1);
                 break;
             case "Space":
                 var arrow = createArrow(player.x, player.y, player.last_xv, player.last_yv);
                 arrows.push(arrow);
+                break;
+        }
+    }
+
+    function keyUp(event) {
+        switch (event.code) {
+            case "ArrowLeft":
+                player.stopX();
+                break;
+            case "ArrowUp":
+                player.stopY();
+                break;
+            case "ArrowRight":
+                player.stopX();
+                break;
+            case "ArrowDown":
+                player.stopY();
                 break;
         }
     }
