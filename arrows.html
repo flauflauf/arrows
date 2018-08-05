@@ -3,10 +3,17 @@
     window.onload = function () {
         canv = document.getElementById("gc");
         ctx = canv.getContext("2d");
+
         document.addEventListener("keydown", keyDown);
         document.addEventListener("keyup", keyUp);
-        setInterval(game, 1000 / 15);
+
+        requestAnimationFrame(mainLoop);
     }
+
+    lastFrameTimeMs = 0;
+    delta = 0;
+    timestep = 1000 / 60;
+    maxFPS = 60;
 
     player = {
         x: 0,
@@ -15,9 +22,9 @@
         yv: 0,
         last_xv: 1,
         last_yv: 0,
-        updatePosition: function () {
-            this.x += this.xv;
-            this.y += this.yv;
+        updatePosition: function (delta) {
+            this.x += this.xv * delta / 10;
+            this.y += this.yv * delta / 10;
             if (this.x < 0) {
                 this.x = tileCount - 1;
             }
@@ -54,16 +61,11 @@
     tileCount = 20;
     tileSize = 20;
 
-    function game() {
-        update();
-        draw();
-    }
-
-    function update() {
-        player.updatePosition();
+    function update(delta) {
+        player.updatePosition(delta);
 
         for (var i = 0; i < arrows.length; i++) {
-            arrows[i].updatePosition();
+            arrows[i].updatePosition(delta);
         }
 
         if (collide(player, enemy)) {
@@ -104,9 +106,9 @@
             y: col,
             xv: xv,
             yv: yv,
-            updatePosition: function () {
-                this.x += this.xv;
-                this.y += this.yv;
+            updatePosition: function (delta) {
+                this.x += this.xv * delta / 10;
+                this.y += this.yv * delta / 10;
                 if (this.x < 0) {
                     this.x = tileCount - 1;
                 }
@@ -140,7 +142,7 @@
                 player.setDirection(0, 0.1);
                 break;
             case "Space":
-                var arrow = createArrow(player.x, player.y, player.last_xv*5, player.last_yv*5);
+                var arrow = createArrow(player.x, player.y, player.last_xv*3, player.last_yv*3);
                 arrows.push(arrow);
                 break;
         }
@@ -161,5 +163,25 @@
                 player.stopY();
                 break;
         }
+    }
+
+    function mainLoop(timestamp) {
+        // Throttle the frame rate.
+        if (timestamp < lastFrameTimeMs + (1000 / maxFPS)) {
+            requestAnimationFrame(mainLoop);
+            return;
+        }
+
+        // Track the accumulated time that hasn't been simulated yet
+        delta += timestamp - lastFrameTimeMs; // note += here
+        lastFrameTimeMs = timestamp;
+
+        // Simulate the total elapsed time in fixed-size chunks
+        while (delta >= timestep) {
+            update(timestep);
+            delta -= timestep;
+        }
+        draw();
+        requestAnimationFrame(mainLoop);
     }
 </script>
