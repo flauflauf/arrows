@@ -128,19 +128,19 @@
     function keyDown(event) {
         switch (event.code) {
             case "ArrowLeft":
-                player.setDirection(-1, 0);
+                player.setDirection(-0.1, 0);
                 break;
             case "ArrowUp":
-                player.setDirection(0, -1);
+                player.setDirection(0, -0.1);
                 break;
             case "ArrowRight":
-                player.setDirection(1, 0);
+                player.setDirection(0.1, 0);
                 break;
             case "ArrowDown":
-                player.setDirection(0, 1);
+                player.setDirection(0, 0.1);
                 break;
             case "Space":
-                var arrow = createArrow(player.x, player.y, player.last_xv, player.last_yv);
+                var arrow = createArrow(player.x, player.y, player.last_xv*5, player.last_yv*5);
                 arrows.push(arrow);
                 break;
         }
