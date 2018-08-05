@@ -38,9 +38,14 @@
                 this.y = 0;
             }
         },
-        setDirection: function (xv, yv) {
-            player.xv = xv; player.yv = yv;
+        setXDirection: function (xv) {
+            player.xv = xv;
             this.last_xv = this.xv;
+            this.last_yv = 0;
+        },
+        setYDirection: function (yv) {
+            player.yv = yv;
+            this.last_xv = 0;
             this.last_yv = this.yv;
         },
         stopX: function () {
@@ -134,16 +139,16 @@
     function keyDown(event) {
         switch (event.code) {
             case "ArrowLeft":
-                player.setDirection(-0.1, 0);
+                player.setXDirection(-0.1);
                 break;
             case "ArrowUp":
-                player.setDirection(0, -0.1);
+                player.setYDirection(-0.1);
                 break;
             case "ArrowRight":
-                player.setDirection(0.1, 0);
+                player.setXDirection(0.1);
                 break;
             case "ArrowDown":
-                player.setDirection(0, 0.1);
+                player.setYDirection(0.1);
                 break;
             case "Space":
                 var arrow = createArrow(player.x, player.y, player.last_xv*3, player.last_yv*3);
