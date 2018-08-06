@@ -15,27 +15,32 @@
     timestep = 1000 / 60;
     maxFPS = 60;
 
+    game_width = 600;
+    game_height = 600;
+
     player = {
         color: "lime",
         x: 0,
         y: 0,
         xv: 0,
         yv: 0,
+        width: 20,
+        height: 20,
         last_xv: 1,
         last_yv: 0,
         updatePosition: function (delta) {
-            this.x += this.xv * delta / 10;
-            this.y += this.yv * delta / 10;
-            if (this.x < 0) {
-                this.x = tileCount - 1;
+            this.x += this.xv * delta;
+            this.y += this.yv * delta;
+            if (this.x + this.width < 0) {
+                this.x = game_width - 1;
             }
-            if (this.y < 0) {
-                this.y = tileCount - 1;
+            if (this.y + this.height < 0) {
+                this.y = game_height - 1;
             }
-            if (this.x >= tileCount) {
+            if (this.x >= game_width) {
                 this.x = 0;
             }
-            if (this.y >= tileCount) {
+            if (this.y >= game_height) {
                 this.y = 0;
             }
         },
@@ -60,13 +65,12 @@
     enemy = {
         color: "red",
         x: 10,
-        y: 10
+        y: 10,
+        width: 20,
+        height: 20
     };
 
     arrows = [];
-
-    tileCount = 30;
-    tileSize = 20;
 
     function update(delta) {
         player.updatePosition(delta);
@@ -75,10 +79,10 @@
             arrows[i].updatePosition(delta);
         }
 
-        if (collide(player, enemy)) {
-            enemy.x = Math.floor(Math.random() * tileCount);
-            enemy.y = Math.floor(Math.random() * tileCount);
-        }
+        // if (collide(player, enemy)) {
+        //     enemy.x = Math.floor(Math.random() * game_width);
+        //     enemy.y = Math.floor(Math.random() * game_height);
+        // }
     }
 
     function collide(a, b) {
@@ -108,29 +112,31 @@
 
     function drawEntity(entity) {
         ctx.fillStyle = entity.color;
-        ctx.fillRect(entity.x * tileSize, entity.y * tileSize, tileSize, tileSize);
+        ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
     }
 
-    function createArrow(row, col, xv, yv) {
+    function createArrow(x, y, xv, yv) {
         var arrow = {
             color: "yellow",
-            x: row,
-            y: col,
+            x: x,
+            y: y,
             xv: xv,
             yv: yv,
+            width: 20,
+            height: 20,
             updatePosition: function (delta) {
-                this.x += this.xv * delta / 10;
-                this.y += this.yv * delta / 10;
-                if (this.x < 0) {
-                    this.x = tileCount - 1;
+                this.x += this.xv * delta;
+                this.y += this.yv * delta;
+                if (this.x + this.width < 0) {
+                    this.x = game_width - 1;
                 }
-                if (this.y < 0) {
-                    this.y = tileCount - 1;
+                if (this.y + this.height < 0) {
+                    this.y = game_height - 1;
                 }
-                if (this.x >= tileCount) {
+                if (this.x >= game_width) {
                     this.x = 0;
                 }
-                if (this.y >= tileCount) {
+                if (this.y >= game_height) {
                     this.y = 0;
                 }
             }
