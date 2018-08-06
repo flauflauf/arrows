@@ -16,6 +16,7 @@
     maxFPS = 60;
 
     player = {
+        color: "lime",
         x: 0,
         y: 0,
         xv: 0,
@@ -57,6 +58,7 @@
     };
 
     enemy = {
+        color: "red",
         x: 10,
         y: 10
     };
@@ -92,11 +94,11 @@
         // ctx.fillText(player.last_xv, 20, 50);
         // ctx.fillText(player.last_yv, 20, 80);
 
-        drawTile(player.x, player.y, "lime");
-        drawTile(enemy.x, enemy.y, "red");
+        drawEntity(player);
+        drawEntity(enemy);
 
         for (var i = 0; i < arrows.length; i++) {
-            drawTile(arrows[i].x, arrows[i].y, "yellow");
+            drawEntity(arrows[i]);
         }
     }
 
@@ -104,13 +106,14 @@
         delta = 0;
     }
 
-    function drawTile(row, col, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(row * tileSize, col * tileSize, tileSize, tileSize);
+    function drawEntity(entity) {
+        ctx.fillStyle = entity.color;
+        ctx.fillRect(entity.x * tileSize, entity.y * tileSize, tileSize, tileSize);
     }
 
     function createArrow(row, col, xv, yv) {
         var arrow = {
+            color: "yellow",
             x: row,
             y: col,
             xv: xv,
