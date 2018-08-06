@@ -1,5 +1,58 @@
 let canv
 let ctx;
+
+class Entity {
+    last_xv: number
+    last_yv: number
+
+    constructor(public color: String, public x: number, public y: number, private width: number, private height: number, private xv: number, private yv: number, private game_width: number, private game_height: number) {
+        this.last_xv = 1
+        this.last_yv = 0
+    }
+
+    updatePosition(delta: number) {
+        this.x += this.xv * delta;
+        this.y += this.yv * delta;
+        if (this.x + this.width < 0) {
+            this.x = this.game_width - 1;
+        }
+        if (this.y + this.height < 0) {
+            this.y = this.game_height - 1;
+        }
+        if (this.x >= this.game_width) {
+            this.x = 0;
+        }
+        if (this.y >= this.game_height) {
+            this.y = 0;
+        }
+    }
+
+    setXDirection(xv: number) {
+        this.xv = xv;
+        this.last_xv = this.xv;
+        this.last_yv = 0;
+    }
+
+    setYDirection(yv: number) {
+        this.yv = yv;
+        this.last_xv = 0;
+        this.last_yv = this.yv;
+    }
+
+    stopX() {
+        this.xv = 0;
+    }
+
+    stopY() {
+        this.yv = 0;
+    }
+
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
 window.onload = function () {
     canv = <HTMLCanvasElement> document.getElementById("gc");
     ctx = canv.getContext("2d");
@@ -18,59 +71,9 @@ let maxFPS = 60;
 let game_width = 600;
 let game_height = 600;
 
-let player = {
-    color: "lime",
-    x: 0,
-    y: 0,
-    xv: 0,
-    yv: 0,
-    width: 20,
-    height: 20,
-    last_xv: 1,
-    last_yv: 0,
-    updatePosition: function (delta) {
-        this.x += this.xv * delta;
-        this.y += this.yv * delta;
-        if (this.x + this.width < 0) {
-            this.x = game_width - 1;
-        }
-        if (this.y + this.height < 0) {
-            this.y = game_height - 1;
-        }
-        if (this.x >= game_width) {
-            this.x = 0;
-        }
-        if (this.y >= game_height) {
-            this.y = 0;
-        }
-    },
-    setXDirection: function (xv) {
-        player.xv = xv;
-        this.last_xv = this.xv;
-        this.last_yv = 0;
-    },
-    setYDirection: function (yv) {
-        player.yv = yv;
-        this.last_xv = 0;
-        this.last_yv = this.yv;
-    },
-    stopX: function () {
-        player.xv = 0;
-    },
-    stopY: function () {
-        player.yv = 0;
-    }
-};
-
-let enemy = {
-    color: "red",
-    x: 10,
-    y: 10,
-    width: 20,
-    height: 20
-};
-
-let arrows = [];
+let player = new Entity("lime", 0, 0, 20, 20, 0, 0, game_width, game_height)
+let enemy = new Entity("red", 10, 10, 20, 20, 0, 0, game_width, game_height)
+let arrows: Entity[] = [];
 
 function update(delta) {
     player.updatePosition(delta);
@@ -98,51 +101,16 @@ function draw() {
     // ctx.fillText(player.last_xv, 20, 50);
     // ctx.fillText(player.last_yv, 20, 80);
 
-    drawEntity(player);
-    drawEntity(enemy);
+    player.draw();
+    enemy.draw();
 
     for (var i = 0; i < arrows.length; i++) {
-        drawEntity(arrows[i]);
+        arrows[i].draw();
     }
 }
 
 function panic() {
     delta = 0;
-}
-
-function drawEntity(entity) {
-    ctx.fillStyle = entity.color;
-    ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
-}
-
-function createArrow(x, y, xv, yv) {
-    var arrow = {
-        color: "yellow",
-        x: x,
-        y: y,
-        xv: xv,
-        yv: yv,
-        width: 20,
-        height: 20,
-        updatePosition: function (delta) {
-            this.x += this.xv * delta;
-            this.y += this.yv * delta;
-            if (this.x + this.width < 0) {
-                this.x = game_width - 1;
-            }
-            if (this.y + this.height < 0) {
-                this.y = game_height - 1;
-            }
-            if (this.x >= game_width) {
-                this.x = 0;
-            }
-            if (this.y >= game_height) {
-                this.y = 0;
-            }
-        }
-    };
-
-    return arrow;
 }
 
 function keyDown(event) {
@@ -160,7 +128,7 @@ function keyDown(event) {
             player.setYDirection(0.1);
             break;
         case "Space":
-            var arrow = createArrow(player.x, player.y, player.last_xv*3, player.last_yv*3);
+            let arrow = new Entity("yellow", player.x, player.y, 20, 20, player.last_xv*3, player.last_yv*3, game_width, game_height);
             arrows.push(arrow);
             break;
     }
