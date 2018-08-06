@@ -1,19 +1,24 @@
-var canv;
-var ctx;
+let canv
+let ctx;
 window.onload = function () {
-    canv = document.getElementById("gc");
+    canv = <HTMLCanvasElement> document.getElementById("gc");
     ctx = canv.getContext("2d");
+
     document.addEventListener("keydown", keyDown);
     document.addEventListener("keyup", keyUp);
+
     requestAnimationFrame(mainLoop);
-};
-var lastFrameTimeMs = 0;
-var delta = 0;
-var timestep = 1000 / 60;
-var maxFPS = 60;
-var game_width = 600;
-var game_height = 600;
-var player = {
+}
+
+let lastFrameTimeMs = 0;
+let delta = 0;
+let timestep = 1000 / 60;
+let maxFPS = 60;
+
+let game_width = 600;
+let game_height = 600;
+
+let player = {
     color: "lime",
     x: 0,
     y: 0,
@@ -56,47 +61,60 @@ var player = {
         player.yv = 0;
     }
 };
-var enemy = {
+
+let enemy = {
     color: "red",
     x: 10,
     y: 10,
     width: 20,
     height: 20
 };
-var arrows = [];
+
+let arrows = [];
+
 function update(delta) {
     player.updatePosition(delta);
+
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].updatePosition(delta);
     }
+
     // if (collide(player, enemy)) {
     //     enemy.x = Math.floor(Math.random() * game_width);
     //     enemy.y = Math.floor(Math.random() * game_height);
     // }
 }
+
 function collide(a, b) {
     return a.x == b.x && a.y == b.y;
 }
+
 function draw() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canv.width, canv.height);
+
     // ctx.fillStyle = "white";
     // ctx.font = "30px Arial";
     // ctx.fillText(player.last_xv, 20, 50);
     // ctx.fillText(player.last_yv, 20, 80);
+
     drawEntity(player);
     drawEntity(enemy);
+
     for (var i = 0; i < arrows.length; i++) {
         drawEntity(arrows[i]);
     }
 }
+
 function panic() {
     delta = 0;
 }
+
 function drawEntity(entity) {
     ctx.fillStyle = entity.color;
     ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
 }
+
 function createArrow(x, y, xv, yv) {
     var arrow = {
         color: "yellow",
@@ -123,8 +141,10 @@ function createArrow(x, y, xv, yv) {
             }
         }
     };
+
     return arrow;
 }
+
 function keyDown(event) {
     switch (event.code) {
         case "ArrowLeft":
@@ -140,11 +160,12 @@ function keyDown(event) {
             player.setYDirection(0.1);
             break;
         case "Space":
-            var arrow = createArrow(player.x, player.y, player.last_xv * 3, player.last_yv * 3);
+            var arrow = createArrow(player.x, player.y, player.last_xv*3, player.last_yv*3);
             arrows.push(arrow);
             break;
     }
 }
+
 function keyUp(event) {
     switch (event.code) {
         case "ArrowLeft":
@@ -161,15 +182,18 @@ function keyUp(event) {
             break;
     }
 }
+
 function mainLoop(timestamp) {
     // Throttle the frame rate.
     if (timestamp < lastFrameTimeMs + (1000 / maxFPS)) {
         requestAnimationFrame(mainLoop);
         return;
     }
+
     // Track the accumulated time that hasn't been simulated yet
     delta += timestamp - lastFrameTimeMs; // note += here
     lastFrameTimeMs = timestamp;
+
     // Simulate the total elapsed time in fixed-size chunks
     var numUpdateSteps = 0;
     while (delta >= timestep) {
