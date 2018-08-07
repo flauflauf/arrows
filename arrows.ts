@@ -88,7 +88,7 @@ function update(delta) {
     // }
 }
 
-function collide(a, b) {
+function collide(a: Entity, b: Entity) {
     return a.x == b.x && a.y == b.y;
 }
 
