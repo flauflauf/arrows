@@ -73,13 +73,20 @@ function update(delta) {
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].updatePosition(delta);
     }
-    // if (collide(player, enemy)) {
-    //     enemy.x = Math.floor(Math.random() * game_width);
-    //     enemy.y = Math.floor(Math.random() * game_height);
-    // }
+    if (collide(player, enemy)) {
+        enemy.x = Math.floor(Math.random() * game_width);
+        enemy.y = Math.floor(Math.random() * game_height);
+    }
 }
 function collide(a, b) {
-    return a.x == b.x && a.y == b.y;
+    var xOverlapAB = a.x < b.x && b.x < (a.x + a.width); // b overlaps a from right
+    var xOverlapBA = b.x < a.x && a.x < (b.x + b.width); // a overlaps b from right
+    var xOverlap = xOverlapAB || xOverlapBA;
+    var yOverlapAB = a.y < b.y && b.y < (a.y + a.height); // b overlaps a from bottom
+    var yOverlapBA = b.y < a.y && a.y < (b.y + b.height); // a overlaps b from bottom
+    var yOverlap = yOverlapAB || yOverlapBA;
+    var overlap = xOverlap && yOverlap;
+    return overlap;
 }
 function draw() {
     ctx.fillStyle = "black";

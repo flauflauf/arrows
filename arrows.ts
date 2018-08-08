@@ -5,7 +5,7 @@ class Entity {
     last_xv: number
     last_yv: number
 
-    constructor(public color: String, public x: number, public y: number, private width: number, private height: number, private xv: number, private yv: number, private game_width: number, private game_height: number) {
+    constructor(public color: String, public x: number, public y: number, public width: number, public height: number, private xv: number, private yv: number, private game_width: number, private game_height: number) {
         this.last_xv = 1
         this.last_yv = 0
     }
@@ -82,14 +82,23 @@ function update(delta) {
         arrows[i].updatePosition(delta);
     }
 
-    // if (collide(player, enemy)) {
-    //     enemy.x = Math.floor(Math.random() * game_width);
-    //     enemy.y = Math.floor(Math.random() * game_height);
-    // }
+    if (collide(player, enemy)) {
+        enemy.x = Math.floor(Math.random() * game_width);
+        enemy.y = Math.floor(Math.random() * game_height);
+    }
 }
 
 function collide(a: Entity, b: Entity) {
-    return a.x == b.x && a.y == b.y;
+    let xOverlapAB = a.x < b.x && b.x < (a.x + a.width) // b overlaps a from right
+    let xOverlapBA = b.x < a.x && a.x < (b.x + b.width) // a overlaps b from right
+    let xOverlap = xOverlapAB || xOverlapBA
+
+    let yOverlapAB = a.y < b.y && b.y < (a.y + a.height) // b overlaps a from bottom
+    let yOverlapBA = b.y < a.y && a.y < (b.y + b.height) // a overlaps b from bottom
+    let yOverlap = yOverlapAB || yOverlapBA
+
+    let overlap = xOverlap && yOverlap
+    return overlap
 }
 
 function draw() {
