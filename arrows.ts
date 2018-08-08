@@ -54,7 +54,7 @@ class Entity {
 }
 
 window.onload = function () {
-    canv = <HTMLCanvasElement> document.getElementById("gc");
+    canv = <HTMLCanvasElement>document.getElementById("gc");
     ctx = canv.getContext("2d");
 
     document.addEventListener("keydown", keyDown);
@@ -147,7 +147,7 @@ function keyDown(event) {
             player.setYDirection(0.1);
             break;
         case "Space":
-            let arrow = new Entity("yellow", player.x, player.y, 20, 20, player.last_xv*3, player.last_yv*3, game_width, game_height);
+            let arrow = new Entity("yellow", player.x, player.y, 20, 20, player.last_xv * 3, player.last_yv * 3, game_width, game_height);
             arrows.push(arrow);
             break;
     }
