@@ -83,8 +83,13 @@ function update(delta) {
     }
 
     if (collide(player, enemy)) {
-        enemy.x = Math.floor(Math.random() * game_width);
-        enemy.y = Math.floor(Math.random() * game_height);
+        resetEnemy();
+    }
+
+    for (var i = 0; i < arrows.length; i++) {
+        if (collide(arrows[i], enemy)) {
+            resetEnemy();
+        }
     }
 }
 
@@ -99,6 +104,11 @@ function collide(a: Entity, b: Entity) {
 
     let overlap = xOverlap && yOverlap
     return overlap
+}
+
+function resetEnemy() {
+    enemy.x = Math.floor(Math.random() * game_width);
+    enemy.y = Math.floor(Math.random() * game_height);
 }
 
 function draw() {
