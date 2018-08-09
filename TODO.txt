@@ -1,4 +1,8 @@
-- Kollision korrekt berechnen (Ist: exakt gleiche Koordinaten, Soll: Überschneidung)
+- Zweiten Spieler einbauen
+- Health-Bars einbauen
+- statt last_xv etc. lieber die Blickrichtung speichern
+- statt explizit Geschwindigkeiten zu vergeben, Blickrichtung als Einheitsvektor definieren und mit Geschwindigkeit (im Moment konstant) skalieren
+- Pfeile als Pfeile darstellen
 - Kollision bei Zeitsprüngen durch delta-Updates robust machen (s. Git Stash)
 - Bei mehreren Pfeiltasten gleichzeitig besser auf keyUp reagieren, sodass z.B. ein Wechsel von links nach rechts kein zwischenzeitliches Stoppen mehr verursacht
 - Sprites statt Vierecken zeichnen

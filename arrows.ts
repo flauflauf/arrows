@@ -51,6 +51,15 @@ class Entity {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
+
+    reset() {
+        this.x = Math.floor(Math.random() * game_width);
+        this.y = Math.floor(Math.random() * game_height);
+    }
+
+    fireArrow(): Entity {
+        return new Entity("yellow", this.x, this.y, 20, 20, this.last_xv * 3, this.last_yv * 3, game_width, game_height);
+    }
 }
 
 window.onload = function () {
@@ -71,24 +80,23 @@ let maxFPS = 60;
 let game_width = 600;
 let game_height = 600;
 
-let player = new Entity("lime", 0, 0, 20, 20, 0, 0, game_width, game_height)
-let enemy = new Entity("red", 10, 10, 20, 20, 0, 0, game_width, game_height)
+let player1 = new Entity("lime", 0, 0, 20, 20, 0, 0, game_width, game_height)
+let player2 = new Entity("red", 10, 10, 20, 20, 0, 0, game_width, game_height)
 let arrows: Entity[] = [];
 
 function update(delta) {
-    player.updatePosition(delta);
+    player1.updatePosition(delta);
 
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].updatePosition(delta);
     }
 
-    if (collide(player, enemy)) {
-        resetEnemy();
-    }
-
     for (var i = 0; i < arrows.length; i++) {
-        if (collide(arrows[i], enemy)) {
-            resetEnemy();
+        if (collide(arrows[i], player1)) {
+            player1.reset();
+        }
+        if (collide(arrows[i], player2)) {
+            player2.reset();
         }
     }
 }
@@ -106,22 +114,17 @@ function collide(a: Entity, b: Entity) {
     return overlap
 }
 
-function resetEnemy() {
-    enemy.x = Math.floor(Math.random() * game_width);
-    enemy.y = Math.floor(Math.random() * game_height);
-}
-
 function draw() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canv.width, canv.height);
 
     // ctx.fillStyle = "white";
     // ctx.font = "30px Arial";
-    // ctx.fillText(player.last_xv, 20, 50);
-    // ctx.fillText(player.last_yv, 20, 80);
+    // ctx.fillText(player1.last_xv, 20, 50);
+    // ctx.fillText(player1.last_yv, 20, 80);
 
-    player.draw();
-    enemy.draw();
+    player1.draw();
+    player2.draw();
 
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].draw();
@@ -135,19 +138,19 @@ function panic() {
 function keyDown(event) {
     switch (event.code) {
         case "ArrowLeft":
-            player.setXDirection(-0.1);
+            player1.setXDirection(-0.1);
             break;
         case "ArrowUp":
-            player.setYDirection(-0.1);
+            player1.setYDirection(-0.1);
             break;
         case "ArrowRight":
-            player.setXDirection(0.1);
+            player1.setXDirection(0.1);
             break;
         case "ArrowDown":
-            player.setYDirection(0.1);
+            player1.setYDirection(0.1);
             break;
         case "Space":
-            let arrow = new Entity("yellow", player.x, player.y, 20, 20, player.last_xv * 3, player.last_yv * 3, game_width, game_height);
+            let arrow = player1.fireArrow();
             arrows.push(arrow);
             break;
     }
@@ -156,16 +159,16 @@ function keyDown(event) {
 function keyUp(event) {
     switch (event.code) {
         case "ArrowLeft":
-            player.stopX();
+            player1.stopX();
             break;
         case "ArrowUp":
-            player.stopY();
+            player1.stopY();
             break;
         case "ArrowRight":
-            player.stopX();
+            player1.stopX();
             break;
         case "ArrowDown":
-            player.stopY();
+            player1.stopY();
             break;
     }
 }
