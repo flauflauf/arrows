@@ -5,7 +5,7 @@ class Entity {
     last_xv: number
     last_yv: number
 
-    constructor(public color: String, public x: number, public y: number, public width: number, public height: number, private xv: number, private yv: number, private game_width: number, private game_height: number) {
+    constructor(public color: String, public x: number, public y: number, public width: number, public height: number, protected xv: number, protected yv: number, protected game_width: number, protected game_height: number) {
         this.last_xv = 1
         this.last_yv = 0
     }
@@ -27,6 +27,13 @@ class Entity {
         }
     }
 
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
+class Player extends Entity {
     setXDirection(xv: number) {
         this.xv = xv;
         this.last_xv = this.xv;
@@ -45,11 +52,6 @@ class Entity {
 
     stopY() {
         this.yv = 0;
-    }
-
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
     reset() {
@@ -80,8 +82,8 @@ let maxFPS = 60;
 let game_width = 600;
 let game_height = 600;
 
-let player1 = new Entity("lime", 0, 0, 20, 20, 0, 0, game_width, game_height)
-let player2 = new Entity("red", 10, 10, 20, 20, 0, 0, game_width, game_height)
+let player1 = new Player("lime", 0, 0, 20, 20, 0, 0, game_width, game_height)
+let player2 = new Player("red", 10, 10, 20, 20, 0, 0, game_width, game_height)
 let arrows: Entity[] = [];
 
 function update(delta) {

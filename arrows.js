@@ -1,3 +1,16 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var canv;
 var ctx;
 var Entity = /** @class */ (function () {
@@ -30,35 +43,42 @@ var Entity = /** @class */ (function () {
             this.y = 0;
         }
     };
-    Entity.prototype.setXDirection = function (xv) {
-        this.xv = xv;
-        this.last_xv = this.xv;
-        this.last_yv = 0;
-    };
-    Entity.prototype.setYDirection = function (yv) {
-        this.yv = yv;
-        this.last_xv = 0;
-        this.last_yv = this.yv;
-    };
-    Entity.prototype.stopX = function () {
-        this.xv = 0;
-    };
-    Entity.prototype.stopY = function () {
-        this.yv = 0;
-    };
     Entity.prototype.draw = function () {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     };
-    Entity.prototype.reset = function () {
+    return Entity;
+}());
+var Player = /** @class */ (function (_super) {
+    __extends(Player, _super);
+    function Player() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Player.prototype.setXDirection = function (xv) {
+        this.xv = xv;
+        this.last_xv = this.xv;
+        this.last_yv = 0;
+    };
+    Player.prototype.setYDirection = function (yv) {
+        this.yv = yv;
+        this.last_xv = 0;
+        this.last_yv = this.yv;
+    };
+    Player.prototype.stopX = function () {
+        this.xv = 0;
+    };
+    Player.prototype.stopY = function () {
+        this.yv = 0;
+    };
+    Player.prototype.reset = function () {
         this.x = Math.floor(Math.random() * game_width);
         this.y = Math.floor(Math.random() * game_height);
     };
-    Entity.prototype.fireArrow = function () {
+    Player.prototype.fireArrow = function () {
         return new Entity("yellow", this.x, this.y, 20, 20, this.last_xv * 3, this.last_yv * 3, game_width, game_height);
     };
-    return Entity;
-}());
+    return Player;
+}(Entity));
 window.onload = function () {
     canv = document.getElementById("gc");
     ctx = canv.getContext("2d");
@@ -72,8 +92,8 @@ var timestep = 1000 / 60;
 var maxFPS = 60;
 var game_width = 600;
 var game_height = 600;
-var player1 = new Entity("lime", 0, 0, 20, 20, 0, 0, game_width, game_height);
-var player2 = new Entity("red", 10, 10, 20, 20, 0, 0, game_width, game_height);
+var player1 = new Player("lime", 0, 0, 20, 20, 0, 0, game_width, game_height);
+var player2 = new Player("red", 10, 10, 20, 20, 0, 0, game_width, game_height);
 var arrows = [];
 function update(delta) {
     player1.updatePosition(delta);
