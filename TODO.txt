@@ -1,6 +1,15 @@
+- statt last_xv etc. lieber die Blickrichtung speichern
+    CHECK bit-mask enum Direction machen: https://basarat.gitbooks.io/typescript/docs/enums.html#number%20enums-as-flags
+    CHECK velocity als Vector, orientation als Direction (enum, s.u.)
+    CHECK Bei keyDown die bisherige Direction odern mit der neuen: player.direction |= direction
+    CHECK Beu keyUp: player.direction &= !direction
+    CHECK Vector aus Direction erzeugen können, dabei als bit-mask Flags ansehen
+    CHECK Arrow-Velocity-Vector aus Player-Orientation erzeugen
+    - speed Exemplarvariable bei Entities definieren
+    
+
 - Zweiten Spieler einbauen
 - Health-Bars einbauen
-- statt last_xv etc. lieber die Blickrichtung speichern
 - statt explizit Geschwindigkeiten zu vergeben, Blickrichtung als Einheitsvektor definieren und mit Geschwindigkeit (im Moment konstant) skalieren
 - Pfeile als Pfeile darstellen
 - Kollision bei Zeitsprüngen durch delta-Updates robust machen (s. Git Stash)

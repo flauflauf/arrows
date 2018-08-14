@@ -13,23 +13,53 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var canv;
 var ctx;
+var Direction;
+(function (Direction) {
+    Direction[Direction["None"] = 0] = "None";
+    Direction[Direction["Up"] = 1] = "Up";
+    Direction[Direction["Down"] = 2] = "Down";
+    Direction[Direction["Left"] = 4] = "Left";
+    Direction[Direction["Right"] = 8] = "Right";
+})(Direction || (Direction = {}));
+var Vector = /** @class */ (function () {
+    function Vector(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    Vector.of = function (orientation) {
+        var v = new Vector(0, 0);
+        if (orientation & Direction.Up)
+            v.y -= 1;
+        if (orientation & Direction.Down)
+            v.y += 1;
+        if (orientation & Direction.Left)
+            v.x -= 1;
+        if (orientation & Direction.Right)
+            v.x += 1;
+        return v;
+    };
+    Vector.prototype.multiply = function (scalarFactor) {
+        return new Vector(this.x * scalarFactor, this.y * scalarFactor);
+    };
+    Vector.ZERO = new Vector(0, 0);
+    return Vector;
+}());
 var Entity = /** @class */ (function () {
-    function Entity(color, x, y, width, height, xv, yv, game_width, game_height) {
+    function Entity(color, x, y, width, height, orientation, speed, game_width, game_height) {
         this.color = color;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.xv = xv;
-        this.yv = yv;
+        this.orientation = orientation;
+        this.speed = speed;
         this.game_width = game_width;
         this.game_height = game_height;
-        this.last_xv = 1;
-        this.last_yv = 0;
     }
     Entity.prototype.updatePosition = function (delta) {
-        this.x += this.xv * delta;
-        this.y += this.yv * delta;
+        var velocity = Vector.of(this.orientation).multiply(this.speed);
+        this.x += velocity.x * delta;
+        this.y += velocity.y * delta;
         if (this.x + this.width < 0) {
             this.x = this.game_width - 1;
         }
@@ -49,33 +79,39 @@ var Entity = /** @class */ (function () {
     };
     return Entity;
 }());
+var Arrow = /** @class */ (function (_super) {
+    __extends(Arrow, _super);
+    function Arrow(x, y, orientation, game_width, game_height) {
+        var _this = _super.call(this, "yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height) || this;
+        _this.x = x;
+        _this.y = y;
+        _this.orientation = orientation;
+        _this.game_width = game_width;
+        _this.game_height = game_height;
+        return _this;
+    }
+    return Arrow;
+}(Entity));
 var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
     function Player() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.last_direction = Direction.Right;
+        return _this;
     }
-    Player.prototype.setXDirection = function (xv) {
-        this.xv = xv;
-        this.last_xv = this.xv;
-        this.last_yv = 0;
+    Player.prototype.face = function (direction) {
+        this.orientation |= direction;
+        this.last_direction = direction;
     };
-    Player.prototype.setYDirection = function (yv) {
-        this.yv = yv;
-        this.last_xv = 0;
-        this.last_yv = this.yv;
-    };
-    Player.prototype.stopX = function () {
-        this.xv = 0;
-    };
-    Player.prototype.stopY = function () {
-        this.yv = 0;
+    Player.prototype.stopDirection = function (direction) {
+        this.orientation &= ~direction;
     };
     Player.prototype.reset = function () {
         this.x = Math.floor(Math.random() * game_width);
         this.y = Math.floor(Math.random() * game_height);
     };
     Player.prototype.fireArrow = function () {
-        return new Entity("yellow", this.x, this.y, 20, 20, this.last_xv * 3, this.last_yv * 3, game_width, game_height);
+        return new Arrow(this.x, this.y, this.last_direction, game_width, game_height);
     };
     return Player;
 }(Entity));
@@ -92,8 +128,8 @@ var timestep = 1000 / 60;
 var maxFPS = 60;
 var game_width = 600;
 var game_height = 600;
-var player1 = new Player("lime", 0, 0, 20, 20, 0, 0, game_width, game_height);
-var player2 = new Player("red", 10, 10, 20, 20, 0, 0, game_width, game_height);
+var player1 = new Player("lime", 0, 0, 20, 20, Direction.None, 0.1, game_width, game_height);
+var player2 = new Player("red", 10, 10, 20, 20, Direction.None, 0.1, game_width, game_height);
 var arrows = [];
 function update(delta) {
     player1.updatePosition(delta);
@@ -122,10 +158,6 @@ function collide(a, b) {
 function draw() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canv.width, canv.height);
-    // ctx.fillStyle = "white";
-    // ctx.font = "30px Arial";
-    // ctx.fillText(player1.last_xv, 20, 50);
-    // ctx.fillText(player1.last_yv, 20, 80);
     player1.draw();
     player2.draw();
     for (var i = 0; i < arrows.length; i++) {
@@ -138,16 +170,16 @@ function panic() {
 function keyDown(event) {
     switch (event.code) {
         case "ArrowLeft":
-            player1.setXDirection(-0.1);
+            player1.face(Direction.Left);
             break;
         case "ArrowUp":
-            player1.setYDirection(-0.1);
+            player1.face(Direction.Up);
             break;
         case "ArrowRight":
-            player1.setXDirection(0.1);
+            player1.face(Direction.Right);
             break;
         case "ArrowDown":
-            player1.setYDirection(0.1);
+            player1.face(Direction.Down);
             break;
         case "Space":
             var arrow = player1.fireArrow();
@@ -158,16 +190,16 @@ function keyDown(event) {
 function keyUp(event) {
     switch (event.code) {
         case "ArrowLeft":
-            player1.stopX();
+            player1.stopDirection(Direction.Left);
             break;
         case "ArrowUp":
-            player1.stopY();
+            player1.stopDirection(Direction.Up);
             break;
         case "ArrowRight":
-            player1.stopX();
+            player1.stopDirection(Direction.Right);
             break;
         case "ArrowDown":
-            player1.stopY();
+            player1.stopDirection(Direction.Down);
             break;
     }
 }

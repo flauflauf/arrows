@@ -1,18 +1,52 @@
 let canv
 let ctx;
 
-class Entity {
-    last_xv: number
-    last_yv: number
+enum Direction {
+    None    = 0,
+    Up      = 1 << 0,
+    Down    = 1 << 1,
+    Left    = 1 << 2,
+    Right   = 1 << 3
+}
 
-    constructor(public color: String, public x: number, public y: number, public width: number, public height: number, protected xv: number, protected yv: number, protected game_width: number, protected game_height: number) {
-        this.last_xv = 1
-        this.last_yv = 0
+class Vector {
+    static ZERO = new Vector(0, 0)
+
+    constructor(public x: number, public y: number) {
+
+    }
+
+    static of(orientation: Direction) {
+        let v = new Vector(0, 0)
+        if (orientation & Direction.Up) v.y -= 1
+        if (orientation & Direction.Down) v.y += 1
+        if (orientation & Direction.Left) v.x -= 1
+        if (orientation & Direction.Right) v.x += 1
+        return v
+    }
+
+    multiply(scalarFactor: number) {
+        return new Vector(this.x * scalarFactor, this.y * scalarFactor);
+    }
+}
+
+class Entity {
+    constructor(
+        public color: String,
+        public x: number,
+        public y: number,
+        public width: number,
+        public height: number,
+        public orientation: Direction,
+        public speed: number,
+        protected game_width: number,
+        protected game_height: number) {
     }
 
     updatePosition(delta: number) {
-        this.x += this.xv * delta;
-        this.y += this.yv * delta;
+        let velocity = Vector.of(this.orientation).multiply(this.speed);
+        this.x += velocity.x * delta;
+        this.y += velocity.y * delta;
         if (this.x + this.width < 0) {
             this.x = this.game_width - 1;
         }
@@ -33,25 +67,23 @@ class Entity {
     }
 }
 
+class Arrow extends Entity {
+
+    constructor(public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
+        super("yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height);
+    }
+}
+
 class Player extends Entity {
-    setXDirection(xv: number) {
-        this.xv = xv;
-        this.last_xv = this.xv;
-        this.last_yv = 0;
+    last_direction: Direction = Direction.Right;
+
+    face(direction: Direction) {
+        this.orientation |= direction
+        this.last_direction = direction
     }
 
-    setYDirection(yv: number) {
-        this.yv = yv;
-        this.last_xv = 0;
-        this.last_yv = this.yv;
-    }
-
-    stopX() {
-        this.xv = 0;
-    }
-
-    stopY() {
-        this.yv = 0;
+    stopDirection(direction: Direction) {
+        this.orientation &= ~direction
     }
 
     reset() {
@@ -59,8 +91,8 @@ class Player extends Entity {
         this.y = Math.floor(Math.random() * game_height);
     }
 
-    fireArrow(): Entity {
-        return new Entity("yellow", this.x, this.y, 20, 20, this.last_xv * 3, this.last_yv * 3, game_width, game_height);
+    fireArrow(): Arrow {
+        return new Arrow(this.x, this.y, this.last_direction, game_width, game_height);
     }
 }
 
@@ -82,9 +114,9 @@ let maxFPS = 60;
 let game_width = 600;
 let game_height = 600;
 
-let player1 = new Player("lime", 0, 0, 20, 20, 0, 0, game_width, game_height)
-let player2 = new Player("red", 10, 10, 20, 20, 0, 0, game_width, game_height)
-let arrows: Entity[] = [];
+let player1 = new Player("lime", 0, 0, 20, 20, Direction.None, 0.1, game_width, game_height)
+let player2 = new Player("red", 10, 10, 20, 20, Direction.None, 0.1, game_width, game_height)
+let arrows: Arrow[] = [];
 
 function update(delta) {
     player1.updatePosition(delta);
@@ -120,11 +152,6 @@ function draw() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canv.width, canv.height);
 
-    // ctx.fillStyle = "white";
-    // ctx.font = "30px Arial";
-    // ctx.fillText(player1.last_xv, 20, 50);
-    // ctx.fillText(player1.last_yv, 20, 80);
-
     player1.draw();
     player2.draw();
 
@@ -140,16 +167,16 @@ function panic() {
 function keyDown(event) {
     switch (event.code) {
         case "ArrowLeft":
-            player1.setXDirection(-0.1);
+            player1.face(Direction.Left);
             break;
         case "ArrowUp":
-            player1.setYDirection(-0.1);
+            player1.face(Direction.Up);
             break;
         case "ArrowRight":
-            player1.setXDirection(0.1);
+            player1.face(Direction.Right);
             break;
         case "ArrowDown":
-            player1.setYDirection(0.1);
+            player1.face(Direction.Down);
             break;
         case "Space":
             let arrow = player1.fireArrow();
@@ -161,16 +188,16 @@ function keyDown(event) {
 function keyUp(event) {
     switch (event.code) {
         case "ArrowLeft":
-            player1.stopX();
+            player1.stopDirection(Direction.Left)
             break;
         case "ArrowUp":
-            player1.stopY();
+            player1.stopDirection(Direction.Up)
             break;
         case "ArrowRight":
-            player1.stopX();
+            player1.stopDirection(Direction.Right)
             break;
         case "ArrowDown":
-            player1.stopY();
+            player1.stopDirection(Direction.Down)
             break;
     }
 }
