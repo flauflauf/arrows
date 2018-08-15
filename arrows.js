@@ -133,6 +133,7 @@ var player2 = new Player("red", 10, 10, 20, 20, Direction.None, 0.1, game_width,
 var arrows = [];
 function update(delta) {
     player1.updatePosition(delta);
+    player2.updatePosition(delta);
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].updatePosition(delta);
     }
@@ -169,37 +170,63 @@ function panic() {
 }
 function keyDown(event) {
     switch (event.code) {
-        case "ArrowLeft":
+        case "KeyA":
             player1.face(Direction.Left);
             break;
-        case "ArrowUp":
+        case "KeyW":
             player1.face(Direction.Up);
             break;
-        case "ArrowRight":
+        case "KeyD":
             player1.face(Direction.Right);
             break;
-        case "ArrowDown":
+        case "KeyS":
             player1.face(Direction.Down);
             break;
         case "Space":
-            var arrow = player1.fireArrow();
-            arrows.push(arrow);
+            arrows.push(player1.fireArrow());
+            break;
+        case "ArrowLeft":
+            player2.face(Direction.Left);
+            break;
+        case "ArrowUp":
+            player2.face(Direction.Up);
+            break;
+        case "ArrowRight":
+            player2.face(Direction.Right);
+            break;
+        case "ArrowDown":
+            player2.face(Direction.Down);
+            break;
+        case "Enter":
+            arrows.push(player2.fireArrow());
             break;
     }
 }
 function keyUp(event) {
     switch (event.code) {
-        case "ArrowLeft":
+        case "KeyA":
             player1.stopDirection(Direction.Left);
             break;
-        case "ArrowUp":
+        case "KeyW":
             player1.stopDirection(Direction.Up);
             break;
-        case "ArrowRight":
+        case "KeyD":
             player1.stopDirection(Direction.Right);
             break;
-        case "ArrowDown":
+        case "KeyS":
             player1.stopDirection(Direction.Down);
+            break;
+        case "ArrowLeft":
+            player2.stopDirection(Direction.Left);
+            break;
+        case "ArrowUp":
+            player2.stopDirection(Direction.Up);
+            break;
+        case "ArrowRight":
+            player2.stopDirection(Direction.Right);
+            break;
+        case "ArrowDown":
+            player2.stopDirection(Direction.Down);
             break;
     }
 }
