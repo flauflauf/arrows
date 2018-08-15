@@ -111,7 +111,22 @@ var Player = /** @class */ (function (_super) {
         this.y = Math.floor(Math.random() * game_height);
     };
     Player.prototype.fireArrow = function () {
-        return new Arrow(this.x, this.y, this.last_direction, game_width, game_height);
+        var offset;
+        switch (this.last_direction) {
+            case (Direction.Left):
+                offset = new Vector(-this.width, 0);
+                break;
+            case (Direction.Up):
+                offset = new Vector(0, -this.height);
+                break;
+            case (Direction.Right):
+                offset = new Vector(this.width, 0);
+                break;
+            case (Direction.Down):
+                offset = new Vector(0, this.height);
+                break;
+        }
+        return new Arrow(this.x + offset.x, this.y + offset.y, this.last_direction, game_width, game_height);
     };
     return Player;
 }(Entity));
