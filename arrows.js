@@ -60,18 +60,6 @@ var Entity = /** @class */ (function () {
         var velocity = Vector.of(this.orientation).multiply(this.speed);
         this.x += velocity.x * delta;
         this.y += velocity.y * delta;
-        if (this.x + this.width < 0) {
-            this.x = this.game_width - 1;
-        }
-        if (this.y + this.height < 0) {
-            this.y = this.game_height - 1;
-        }
-        if (this.x >= this.game_width) {
-            this.x = 0;
-        }
-        if (this.y >= this.game_height) {
-            this.y = 0;
-        }
     };
     Entity.prototype.draw = function () {
         ctx.fillStyle = this.color;
@@ -90,6 +78,12 @@ var Arrow = /** @class */ (function (_super) {
         _this.game_height = game_height;
         return _this;
     }
+    Arrow.prototype.isOutOfBounds = function () {
+        return (this.x + this.width < 0)
+            || (this.y + this.height < 0)
+            || (this.x >= this.game_width)
+            || (this.y >= this.game_height);
+    };
     return Arrow;
 }(Entity));
 var Player = /** @class */ (function (_super) {
@@ -102,6 +96,21 @@ var Player = /** @class */ (function (_super) {
     Player.prototype.face = function (direction) {
         this.orientation |= direction;
         this.last_direction = direction;
+    };
+    Player.prototype.updatePosition = function (delta) {
+        _super.prototype.updatePosition.call(this, delta);
+        if (this.x < 0) {
+            this.x = 0;
+        }
+        if (this.y < 0) {
+            this.y = 0;
+        }
+        if (this.x >= this.game_width - this.width) {
+            this.x = this.game_width - this.width;
+        }
+        if (this.y >= this.game_height - this.height) {
+            this.y = this.game_width - this.width;
+        }
     };
     Player.prototype.stopDirection = function (direction) {
         this.orientation &= ~direction;
@@ -152,6 +161,7 @@ function update(delta) {
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].updatePosition(delta);
     }
+    arrows = arrows.filter(function (a) { return !a.isOutOfBounds(); });
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
             player1.reset();
@@ -179,6 +189,9 @@ function draw() {
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].draw();
     }
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText(arrows.length, 20, 50);
 }
 function panic() {
     delta = 0;

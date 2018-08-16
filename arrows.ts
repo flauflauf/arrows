@@ -47,18 +47,6 @@ class Entity {
         let velocity = Vector.of(this.orientation).multiply(this.speed);
         this.x += velocity.x * delta;
         this.y += velocity.y * delta;
-        if (this.x + this.width < 0) {
-            this.x = this.game_width - 1;
-        }
-        if (this.y + this.height < 0) {
-            this.y = this.game_height - 1;
-        }
-        if (this.x >= this.game_width) {
-            this.x = 0;
-        }
-        if (this.y >= this.game_height) {
-            this.y = 0;
-        }
     }
 
     draw() {
@@ -72,6 +60,13 @@ class Arrow extends Entity {
     constructor(public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
         super("yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height);
     }
+
+    isOutOfBounds(): boolean {
+        return (this.x + this.width < 0)
+            || (this.y + this.height < 0)
+            || (this.x >= this.game_width)
+            || (this.y >= this.game_height)
+    }
 }
 
 class Player extends Entity {
@@ -80,6 +75,23 @@ class Player extends Entity {
     face(direction: Direction) {
         this.orientation |= direction
         this.last_direction = direction
+    }
+
+    updatePosition(delta: number) {
+        super.updatePosition(delta)
+
+        if (this.x < 0) {
+            this.x = 0;
+        }
+        if (this.y < 0) {
+            this.y = 0;
+        }
+        if (this.x >= this.game_width - this.width) {
+            this.x = this.game_width - this.width;
+        }
+        if (this.y >= this.game_height - this.height) {
+            this.y = this.game_width - this.width;
+        }
     }
 
     stopDirection(direction: Direction) {
@@ -141,6 +153,8 @@ function update(delta) {
         arrows[i].updatePosition(delta);
     }
 
+    arrows = arrows.filter(a => !a.isOutOfBounds())
+
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
             player1.reset();
@@ -174,6 +188,10 @@ function draw() {
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].draw();
     }
+
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText(arrows.length, 20, 50);
 }
 
 function panic() {
