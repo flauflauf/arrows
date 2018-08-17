@@ -91,6 +91,8 @@ var Player = /** @class */ (function (_super) {
     function Player() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.last_direction = Direction.Right;
+        _this.health = 3;
+        _this.invincibleTimeMs = 0;
         return _this;
     }
     Player.prototype.face = function (direction) {
@@ -111,11 +113,28 @@ var Player = /** @class */ (function (_super) {
         if (this.y >= this.game_height - this.height) {
             this.y = this.game_width - this.width;
         }
+        this.invincibleTimeMs -= delta;
     };
     Player.prototype.stopDirection = function (direction) {
         this.orientation &= ~direction;
     };
+    Player.prototype.hit = function () {
+        if (!this.isInvincible()) {
+            this.health--;
+            if (this.health <= 0)
+                this.reset();
+            this.invincibleTimeMs = 2000;
+        }
+    };
+    Player.prototype.draw = function () {
+        ctx.fillStyle = this.isInvincible() ? "white" : this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    };
+    Player.prototype.isInvincible = function () {
+        return this.invincibleTimeMs > 0;
+    };
     Player.prototype.reset = function () {
+        this.health = 3;
         this.x = Math.floor(Math.random() * game_width);
         this.y = Math.floor(Math.random() * game_height);
     };
@@ -164,10 +183,10 @@ function update(delta) {
     arrows = arrows.filter(function (a) { return !a.isOutOfBounds(); });
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
-            player1.reset();
+            player1.hit();
         }
         if (collide(arrows[i], player2)) {
-            player2.reset();
+            player2.hit();
         }
     }
 }
@@ -189,9 +208,11 @@ function draw() {
     for (var i = 0; i < arrows.length; i++) {
         arrows[i].draw();
     }
-    ctx.fillStyle = "white";
     ctx.font = "30px Arial";
-    ctx.fillText(arrows.length, 20, 50);
+    ctx.fillStyle = "lime";
+    ctx.fillText(player1.health, 20, 50);
+    ctx.fillStyle = "red";
+    ctx.fillText(player2.health, game_width - 50 - 20, 50);
 }
 function panic() {
     delta = 0;

@@ -1,4 +1,3 @@
-- Pfeile beim Bewegen schießen sollte einen nicht mehr selber treffen
 - Health-Bars einbauen
 - statt explizit Geschwindigkeiten zu vergeben, Blickrichtung als Einheitsvektor definieren und mit Geschwindigkeit (im Moment konstant) skalieren
 - Pfeile als Pfeile darstellen

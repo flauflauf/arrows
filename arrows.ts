@@ -70,7 +70,9 @@ class Arrow extends Entity {
 }
 
 class Player extends Entity {
-    last_direction: Direction = Direction.Right;
+    last_direction: Direction = Direction.Right
+    health: number = 3
+    invincibleTimeMs: number = 0
 
     face(direction: Direction) {
         this.orientation |= direction
@@ -92,15 +94,35 @@ class Player extends Entity {
         if (this.y >= this.game_height - this.height) {
             this.y = this.game_width - this.width;
         }
+
+        this.invincibleTimeMs -= delta
     }
 
     stopDirection(direction: Direction) {
         this.orientation &= ~direction
     }
 
+    hit() {
+        if (!this.isInvincible()) {
+            this.health--
+            if (this.health <= 0) this.reset()
+            this.invincibleTimeMs = 2000
+        }
+    }
+
+    draw() {
+        ctx.fillStyle = this.isInvincible() ? "white" : this.color
+        ctx.fillRect(this.x, this.y, this.width, this.height)
+    }
+
+    isInvincible(): boolean {
+        return this.invincibleTimeMs > 0
+    }
+
     reset() {
-        this.x = Math.floor(Math.random() * game_width);
-        this.y = Math.floor(Math.random() * game_height);
+        this.health = 3
+        this.x = Math.floor(Math.random() * game_width)
+        this.y = Math.floor(Math.random() * game_height)
     }
 
     fireArrow(): Arrow {
@@ -157,10 +179,10 @@ function update(delta) {
 
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
-            player1.reset();
+            player1.hit();
         }
         if (collide(arrows[i], player2)) {
-            player2.reset();
+            player2.hit();
         }
     }
 }
@@ -189,9 +211,11 @@ function draw() {
         arrows[i].draw();
     }
 
-    ctx.fillStyle = "white";
     ctx.font = "30px Arial";
-    ctx.fillText(arrows.length, 20, 50);
+    ctx.fillStyle = "lime";
+    ctx.fillText(player1.health, 20, 50);
+    ctx.fillStyle = "red";
+    ctx.fillText(player2.health, game_width - 50 - 20, 50);
 }
 
 function panic() {
