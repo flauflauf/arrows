@@ -1,5 +1,5 @@
 let canv
-let ctx;
+let ctx
 
 enum Direction {
     None    = 0,
@@ -26,7 +26,7 @@ class Vector {
     }
 
     multiply(scalarFactor: number) {
-        return new Vector(this.x * scalarFactor, this.y * scalarFactor);
+        return new Vector(this.x * scalarFactor, this.y * scalarFactor)
     }
 }
 
@@ -44,21 +44,21 @@ class Entity {
     }
 
     updatePosition(delta: number) {
-        let velocity = Vector.of(this.orientation).multiply(this.speed);
-        this.x += velocity.x * delta;
-        this.y += velocity.y * delta;
+        let velocity = Vector.of(this.orientation).multiply(this.speed)
+        this.x += velocity.x * delta
+        this.y += velocity.y * delta
     }
 
     draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillStyle = this.color
+        ctx.fillRect(this.x, this.y, this.width, this.height)
     }
 }
 
 class Arrow extends Entity {
 
     constructor(public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
-        super("yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height);
+        super("yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height)
     }
 
     isOutOfBounds(): boolean {
@@ -83,16 +83,16 @@ class Player extends Entity {
         super.updatePosition(delta)
 
         if (this.x < 0) {
-            this.x = 0;
+            this.x = 0
         }
         if (this.y < 0) {
-            this.y = 0;
+            this.y = 0
         }
         if (this.x >= this.game_width - this.width) {
-            this.x = this.game_width - this.width;
+            this.x = this.game_width - this.width
         }
         if (this.y >= this.game_height - this.height) {
-            this.y = this.game_width - this.width;
+            this.y = this.game_width - this.width
         }
 
         this.invincibleTimeMs -= delta
@@ -130,59 +130,59 @@ class Player extends Entity {
         switch (this.last_direction) {
             case (Direction.Left):
                 offset = new Vector(-this.width, 0)
-                break;
+                break
             case (Direction.Up):
                 offset = new Vector(0, -this.height)
-                break;
+                break
             case (Direction.Right):
                 offset = new Vector(this.width, 0)
-                break;
+                break
             case (Direction.Down):
                 offset = new Vector(0, this.height)
-                break;
+                break
         }
-        return new Arrow(this.x + offset.x, this.y + offset.y, this.last_direction, game_width, game_height);
+        return new Arrow(this.x + offset.x, this.y + offset.y, this.last_direction, game_width, game_height)
     }
 }
 
 window.onload = function () {
-    canv = <HTMLCanvasElement>document.getElementById("gc");
-    ctx = canv.getContext("2d");
+    canv = <HTMLCanvasElement>document.getElementById("gc")
+    ctx = canv.getContext("2d")
 
-    document.addEventListener("keydown", keyDown);
-    document.addEventListener("keyup", keyUp);
+    document.addEventListener("keydown", keyDown)
+    document.addEventListener("keyup", keyUp)
 
-    requestAnimationFrame(mainLoop);
+    requestAnimationFrame(mainLoop)
 }
 
-let lastFrameTimeMs = 0;
-let delta = 0;
-let timestep = 1000 / 60;
-let maxFPS = 60;
+let lastFrameTimeMs = 0
+let delta = 0
+let timestep = 1000 / 60
+let maxFPS = 60
 
-let game_width = 600;
-let game_height = 600;
+let game_width = 600
+let game_height = 600
 
 let player1 = new Player("lime", 0, 0, 20, 20, Direction.None, 0.1, game_width, game_height)
 let player2 = new Player("red", 10, 10, 20, 20, Direction.None, 0.1, game_width, game_height)
-let arrows: Arrow[] = [];
+let arrows: Arrow[] = []
 
 function update(delta) {
-    player1.updatePosition(delta);
-    player2.updatePosition(delta);
+    player1.updatePosition(delta)
+    player2.updatePosition(delta)
 
     for (var i = 0; i < arrows.length; i++) {
-        arrows[i].updatePosition(delta);
+        arrows[i].updatePosition(delta)
     }
 
     arrows = arrows.filter(a => !a.isOutOfBounds())
 
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
-            player1.hit();
+            player1.hit()
         }
         if (collide(arrows[i], player2)) {
-            player2.hit();
+            player2.hit()
         }
     }
 }
@@ -201,114 +201,114 @@ function collide(a: Entity, b: Entity) {
 }
 
 function draw() {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canv.width, canv.height);
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, canv.width, canv.height)
 
-    player1.draw();
-    player2.draw();
+    player1.draw()
+    player2.draw()
 
     for (var i = 0; i < arrows.length; i++) {
-        arrows[i].draw();
+        arrows[i].draw()
     }
 
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "lime";
-    ctx.fillText(player1.health, 20, 50);
-    ctx.fillStyle = "red";
-    ctx.fillText(player2.health, game_width - 50 - 20, 50);
+    ctx.font = "30px Arial"
+    ctx.fillStyle = "lime"
+    ctx.fillText(player1.health, 20, 50)
+    ctx.fillStyle = "red"
+    ctx.fillText(player2.health, game_width - 50 - 20, 50)
 }
 
 function panic() {
-    delta = 0;
+    delta = 0
 }
 
 function keyDown(event) {
     switch (event.code) {
         case "KeyA":
-            player1.face(Direction.Left);
-            break;
+            player1.face(Direction.Left)
+            break
         case "KeyW":
-            player1.face(Direction.Up);
-            break;
+            player1.face(Direction.Up)
+            break
         case "KeyD":
-            player1.face(Direction.Right);
-            break;
+            player1.face(Direction.Right)
+            break
         case "KeyS":
-            player1.face(Direction.Down);
-            break;
+            player1.face(Direction.Down)
+            break
         case "Space":
-            arrows.push(player1.fireArrow());
-            break;
+            arrows.push(player1.fireArrow())
+            break
 
         case "ArrowLeft":
-            player2.face(Direction.Left);
-            break;
+            player2.face(Direction.Left)
+            break
         case "ArrowUp":
-            player2.face(Direction.Up);
-            break;
+            player2.face(Direction.Up)
+            break
         case "ArrowRight":
-            player2.face(Direction.Right);
-            break;
+            player2.face(Direction.Right)
+            break
         case "ArrowDown":
-            player2.face(Direction.Down);
-            break;
+            player2.face(Direction.Down)
+            break
         case "Enter":
-            arrows.push(player2.fireArrow());
-            break;
+            arrows.push(player2.fireArrow())
+            break
     }
 }
 
 function keyUp(event) {
     switch (event.code) {
         case "KeyA":
-            player1.stopDirection(Direction.Left);
-            break;
+            player1.stopDirection(Direction.Left)
+            break
         case "KeyW":
-            player1.stopDirection(Direction.Up);
-            break;
+            player1.stopDirection(Direction.Up)
+            break
         case "KeyD":
-            player1.stopDirection(Direction.Right);
-            break;
+            player1.stopDirection(Direction.Right)
+            break
         case "KeyS":
-            player1.stopDirection(Direction.Down);
-            break;
+            player1.stopDirection(Direction.Down)
+            break
 
         case "ArrowLeft":
             player2.stopDirection(Direction.Left)
-            break;
+            break
         case "ArrowUp":
             player2.stopDirection(Direction.Up)
-            break;
+            break
         case "ArrowRight":
             player2.stopDirection(Direction.Right)
-            break;
+            break
         case "ArrowDown":
             player2.stopDirection(Direction.Down)
-            break;
+            break
     }
 }
 
 function mainLoop(timestamp) {
     // Throttle the frame rate.
     if (timestamp < lastFrameTimeMs + (1000 / maxFPS)) {
-        requestAnimationFrame(mainLoop);
-        return;
+        requestAnimationFrame(mainLoop)
+        return
     }
 
     // Track the accumulated time that hasn't been simulated yet
     delta += timestamp - lastFrameTimeMs; // note += here
-    lastFrameTimeMs = timestamp;
+    lastFrameTimeMs = timestamp
 
     // Simulate the total elapsed time in fixed-size chunks
-    var numUpdateSteps = 0;
+    var numUpdateSteps = 0
     while (delta >= timestep) {
-        update(timestep);
-        delta -= timestep;
+        update(timestep)
+        delta -= timestep
         if (++numUpdateSteps >= 240) {
-            panic();
-            break;
+            panic()
+            break
         }
     }
-    draw();
-    requestAnimationFrame(mainLoop);
+    draw()
+    requestAnimationFrame(mainLoop)
 }
