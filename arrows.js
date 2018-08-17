@@ -191,11 +191,11 @@ function update(delta) {
     }
 }
 function collide(a, b) {
-    var xOverlapAB = a.x < b.x && b.x < (a.x + a.width); // b overlaps a from right
-    var xOverlapBA = b.x < a.x && a.x < (b.x + b.width); // a overlaps b from right
+    var xOverlapAB = a.x <= b.x && b.x < (a.x + a.width); // b overlaps a from right
+    var xOverlapBA = b.x <= a.x && a.x < (b.x + b.width); // a overlaps b from right
     var xOverlap = xOverlapAB || xOverlapBA;
-    var yOverlapAB = a.y < b.y && b.y < (a.y + a.height); // b overlaps a from bottom
-    var yOverlapBA = b.y < a.y && a.y < (b.y + b.height); // a overlaps b from bottom
+    var yOverlapAB = a.y <= b.y && b.y < (a.y + a.height); // b overlaps a from bottom
+    var yOverlapBA = b.y <= a.y && a.y < (b.y + b.height); // a overlaps b from bottom
     var yOverlap = yOverlapAB || yOverlapBA;
     var overlap = xOverlap && yOverlap;
     return overlap;

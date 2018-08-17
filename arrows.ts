@@ -188,12 +188,12 @@ function update(delta) {
 }
 
 function collide(a: Entity, b: Entity) {
-    let xOverlapAB = a.x < b.x && b.x < (a.x + a.width) // b overlaps a from right
-    let xOverlapBA = b.x < a.x && a.x < (b.x + b.width) // a overlaps b from right
+    let xOverlapAB = a.x <= b.x && b.x < (a.x + a.width) // b overlaps a from right
+    let xOverlapBA = b.x <= a.x && a.x < (b.x + b.width) // a overlaps b from right
     let xOverlap = xOverlapAB || xOverlapBA
 
-    let yOverlapAB = a.y < b.y && b.y < (a.y + a.height) // b overlaps a from bottom
-    let yOverlapBA = b.y < a.y && a.y < (b.y + b.height) // a overlaps b from bottom
+    let yOverlapAB = a.y <= b.y && b.y < (a.y + a.height) // b overlaps a from bottom
+    let yOverlapBA = b.y <= a.y && a.y < (b.y + b.height) // a overlaps b from bottom
     let yOverlap = yOverlapAB || yOverlapBA
 
     let overlap = xOverlap && yOverlap
