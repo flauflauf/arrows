@@ -140,6 +140,8 @@ class Player extends Entity {
             case (Direction.Down):
                 offset = new Vector(0, this.height)
                 break
+            default:
+                offset = new Vector(0, 0)
         }
         return new Arrow(this.x + offset.x, this.y + offset.y, this.last_direction, game_width, game_height)
     }
