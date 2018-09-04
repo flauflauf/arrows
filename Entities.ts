@@ -1,5 +1,5 @@
 class Entity {
-    constructor(public color: String, public x: number, public y: number, public width: number, public height: number, public orientation: Direction, public speed: number, protected game_width: number, protected game_height: number) {
+    constructor(public htmlElement : HTMLElement, public color: String, public x: number, public y: number, public width: number, public height: number, public orientation: Direction, public speed: number, protected game_width: number, protected game_height: number) {
     }
     updatePosition(delta: number) {
         let velocity = Vector.of(this.orientation).multiply(this.speed);
@@ -7,15 +7,16 @@ class Entity {
         this.y += velocity.y * delta;
     }
     draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        this.htmlElement.style.left = this.x + "px"
+        this.htmlElement.style.top = this.y + "px"
     }
 }
 
 class Arrow extends Entity {
 
     constructor(public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
-        super("yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height)
+        // TODO nicht null!
+        super(null, "yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height)
     }
 
     isOutOfBounds(): boolean {
@@ -67,10 +68,12 @@ class Player extends Entity {
         }
     }
 
-    draw() {
-        ctx.fillStyle = this.isInvincible() ? "white" : this.color
-        ctx.fillRect(this.x, this.y, this.width, this.height)
-    }
+    // TODO: Wieder bei isInvicible() weiß zeichnen
+
+    // draw() {
+        // ctx.fillStyle = this.isInvincible() ? "white" : this.color
+        // ctx.fillRect(this.x, this.y, this.width, this.height)
+    // }
 
     isInvincible(): boolean {
         return this.invincibleTimeMs > 0

@@ -1,0 +1,24 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.world {
+    background-color: black;
+    width: 600px;
+    height: 600px;
+}
+
+.player {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+}
+
+.player1 {
+    background-color: green;
+}
+
+.player2 {
+    background-color: red;
+}

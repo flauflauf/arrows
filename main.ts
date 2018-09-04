@@ -1,9 +1,16 @@
-let canv
-let ctx
+let world : HTMLElement
+let player1 : Player
+let player2 : Player
+let arrows : Arrow[]
 
 window.onload = function () {
-    canv = <HTMLCanvasElement>document.getElementById("gc")
-    ctx = canv.getContext("2d")
+    world = document.getElementById("world")
+    let player1Div = <HTMLDivElement>world.children.namedItem("player1")
+    let player2Div = <HTMLDivElement>world.children.namedItem("player2")
+
+    player1 = new Player(player1Div, "lime", 0, 0, 20, 20, Direction.None, 0.1, game_width, game_height)
+    player2 = new Player(player2Div, "red", 10, 10, 20, 20, Direction.None, 0.1, game_width, game_height)
+    arrows = []
 
     document.addEventListener("keydown", keyDown)
     document.addEventListener("keyup", keyUp)
@@ -18,10 +25,6 @@ let maxFPS = 60
 
 let game_width = 600
 let game_height = 600
-
-let player1 = new Player("lime", 0, 0, 20, 20, Direction.None, 0.1, game_width, game_height)
-let player2 = new Player("red", 10, 10, 20, 20, Direction.None, 0.1, game_width, game_height)
-let arrows: Arrow[] = []
 
 function update(delta) {
     player1.updatePosition(delta)
@@ -57,21 +60,22 @@ function collide(a: Entity, b: Entity) {
 }
 
 function draw() {
-    ctx.fillStyle = "black"
-    ctx.fillRect(0, 0, canv.width, canv.height)
-
     player1.draw()
     player2.draw()
 
-    for (var i = 0; i < arrows.length; i++) {
-        arrows[i].draw()
-    }
+    // TODO: Arrows wieder zeichnen
 
-    ctx.font = "30px Arial"
-    ctx.fillStyle = "lime"
-    ctx.fillText(player1.health, 20, 50)
-    ctx.fillStyle = "red"
-    ctx.fillText(player2.health, game_width - 50 - 20, 50)
+    // for (var i = 0; i < arrows.length; i++) {
+    //     arrows[i].draw()
+    // }
+
+    // TODO: Leben wieder als Text darstellen. Diesmal mit HTML
+
+    // ctx.font = "30px Arial"
+    // ctx.fillStyle = "lime"
+    // ctx.fillText(player1.health, 20, 50)
+    // ctx.fillStyle = "red"
+    // ctx.fillText(player2.health, game_width - 50 - 20, 50)
 }
 
 function panic() {
