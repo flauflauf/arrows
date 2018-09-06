@@ -34,7 +34,7 @@ function update(delta) {
         arrows[i].updatePosition(delta)
     }
 
-    arrows = arrows.filter(a => !a.isOutOfBounds())
+    arrows = arrows.filter(a => !a.isOutOfBounds()) // TODO: Auch die htmlElemente in der World updaten!
 
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
@@ -63,11 +63,9 @@ function draw() {
     player1.draw()
     player2.draw()
 
-    // TODO: Arrows wieder zeichnen
-
-    // for (var i = 0; i < arrows.length; i++) {
-    //     arrows[i].draw()
-    // }
+    for (var i = 0; i < arrows.length; i++) {
+        arrows[i].draw()
+    }
 
     // TODO: Leben wieder als Text darstellen. Diesmal mit HTML
 
@@ -97,7 +95,7 @@ function keyDown(event) {
             player1.face(Direction.Down)
             break
         case "Space":
-            arrows.push(player1.fireArrow())
+            addArrow(player1)
             break
 
         case "ArrowLeft":
@@ -113,7 +111,7 @@ function keyDown(event) {
             player2.face(Direction.Down)
             break
         case "Enter":
-            arrows.push(player2.fireArrow())
+            addArrow(player2)
             break
     }
 }
@@ -146,6 +144,14 @@ function keyUp(event) {
             player2.stopDirection(Direction.Down)
             break
     }
+}
+
+function addArrow(player: Player) {
+    let arrowHtmlElement = document.createElement("div")
+    arrowHtmlElement.className = "arrow"
+    let arrow = player.fireArrow(arrowHtmlElement)
+    arrows.push(arrow)
+    world.appendChild(arrow.htmlElement)
 }
 
 function mainLoop(timestamp) {

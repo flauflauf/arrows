@@ -14,9 +14,8 @@ class Entity {
 
 class Arrow extends Entity {
 
-    constructor(public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
-        // TODO nicht null!
-        super(null, "yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height)
+    constructor(public htmlElement : HTMLElement, public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
+        super(htmlElement, "yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height)
     }
 
     isOutOfBounds(): boolean {
@@ -85,7 +84,7 @@ class Player extends Entity {
         this.y = Math.floor(Math.random() * game_height)
     }
 
-    fireArrow(): Arrow {
+    fireArrow(arrowHtmlElement: HTMLElement) : Arrow {
         let offset: Vector
         switch (this.last_direction) {
             case (Direction.Left):
@@ -103,6 +102,6 @@ class Player extends Entity {
             default:
                 offset = new Vector(0, 0)
         }
-        return new Arrow(this.x + offset.x, this.y + offset.y, this.last_direction, game_width, game_height)
+        return new Arrow(arrowHtmlElement, this.x + offset.x, this.y + offset.y, this.last_direction, game_width, game_height)
     }
 }
