@@ -2,16 +2,16 @@ class Entity {
     constructor(public htmlElement : HTMLElement, public color: string, public x: number, public y: number, public width: number, public height: number, public orientation: Direction, public speed: number, protected game_width: number, protected game_height: number) {
     }
     updatePosition(delta: number) {
-        let velocity = Vector.of(this.orientation).multiply(this.speed);
-        this.x += velocity.x * delta;
-        this.y += velocity.y * delta;
+        let velocity = Vector.of(this.orientation).multiply(this.speed)
+        this.x += velocity.x * delta
+        this.y += velocity.y * delta
     }
     draw() {
         this.htmlElement.style.left = this.x + "px"
         this.htmlElement.style.top = this.y + "px"
     }
     dispose() {
-        this.htmlElement.remove();
+        this.htmlElement.remove()
     }
 }
 
