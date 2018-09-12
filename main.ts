@@ -2,11 +2,15 @@ let world : HTMLElement
 let player1 : Player
 let player2 : Player
 let arrows : Arrow[]
+let player1Health: HTMLDivElement
+let player2Health: HTMLDivElement
 
 window.onload = function () {
     world = document.getElementById("world")
     let player1Div = <HTMLDivElement>world.children.namedItem("player1")
     let player2Div = <HTMLDivElement>world.children.namedItem("player2")
+    player1Health = <HTMLDivElement>document.getElementById("player1_health")
+    player2Health = <HTMLDivElement>document.getElementById("player2_health")
 
     player1 = new Player(player1Div, "lime", 0, 0, 20, 20, Direction.None, 0.1, game_width, game_height)
     player2 = new Player(player2Div, "red", 10, 10, 20, 20, Direction.None, 0.1, game_width, game_height)
@@ -67,13 +71,8 @@ function draw() {
         arrows[i].draw()
     }
 
-    // TODO: Leben wieder als Text darstellen. Diesmal mit HTML
-
-    // ctx.font = "30px Arial"
-    // ctx.fillStyle = "lime"
-    // ctx.fillText(player1.health, 20, 50)
-    // ctx.fillStyle = "red"
-    // ctx.fillText(player2.health, game_width - 50 - 20, 50)
+    player1Health.textContent = "" + player1.health
+    player2Health.textContent = "" + player2.health
 }
 
 function panic() {

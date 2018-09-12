@@ -3,6 +3,11 @@
 	margin: 0;
 }
 
+.screen {
+    background-color: black;
+    width: 600px;
+}
+
 .world {
     background-color: black;
     width: 600px;
@@ -28,4 +33,20 @@
     width: 20px;
     height: 20px;
     background-color: yellow;
+}
+
+.health {
+    background: none;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.health-player1 {
+    color: green;
+    text-align: left;
+}
+
+.health-player2 {
+    color: red;
+    text-align: right;
 }
