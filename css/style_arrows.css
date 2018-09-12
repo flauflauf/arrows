@@ -1,6 +1,10 @@
 * {
 	padding: 0;
-	margin: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
 }
 
 .world {
@@ -32,8 +36,8 @@
 
 .health {
     background: none;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    padding: 1rem;
+    font-size: 1.5rem;
 }
 
 .health-player1 {
