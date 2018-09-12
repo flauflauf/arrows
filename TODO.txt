@@ -1,7 +1,5 @@
 - Health-Bars einbauen
-- statt explizit Geschwindigkeiten zu vergeben, Blickrichtung als Einheitsvektor definieren und mit Geschwindigkeit (im Moment konstant) skalieren
 - Pfeile als Pfeile darstellen
 - Kollision bei Zeitsprüngen durch delta-Updates robust machen (s. Git Stash)
 - Sprites statt Vierecken zeichnen
 - Art Style überlegen
-- Entity Klasse in eigene Datei
