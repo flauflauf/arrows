@@ -10,6 +10,9 @@ class Entity {
         this.htmlElement.style.left = this.x + "px"
         this.htmlElement.style.top = this.y + "px"
     }
+    dispose() {
+        this.htmlElement.remove();
+    }
 }
 
 class Arrow extends Entity {

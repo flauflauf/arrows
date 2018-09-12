@@ -38,7 +38,8 @@ function update(delta) {
         arrows[i].updatePosition(delta)
     }
 
-    arrows = arrows.filter(a => !a.isOutOfBounds()) // TODO: Auch die htmlElemente in der World updaten!
+    arrows.filter(a => a.isOutOfBounds()).forEach(a => a.dispose())
+    arrows = arrows.filter(a => !a.isOutOfBounds())
 
     for (var i = 0; i < arrows.length; i++) {
         if (collide(arrows[i], player1)) {
