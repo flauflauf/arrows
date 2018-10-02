@@ -1,14 +1,21 @@
 class Entity {
-    constructor(public htmlElement : HTMLElement, public color: string, public x: number, public y: number, public width: number, public height: number, public orientation: Direction, public speed: number, protected game_width: number, protected game_height: number) {
+    constructor(public htmlElement: HTMLElement, public color: string, public x: number, public y: number, public width: number, public height: number, public orientation: Direction, public speed: number, protected game_width: number, protected game_height: number) {
+    }
+    rotationAngle(): number {
+        return this.velocity().angle()
+    }
+    velocity(): Vector {
+        return Vector.of(this.orientation).multiply(this.speed)
     }
     updatePosition(delta: number) {
-        let velocity = Vector.of(this.orientation).multiply(this.speed)
+        let velocity = this.velocity()
         this.x += velocity.x * delta
         this.y += velocity.y * delta
     }
     draw() {
         this.htmlElement.style.left = this.x + "px"
         this.htmlElement.style.top = this.y + "px"
+        this.htmlElement.style.transform = "rotate(" + -this.rotationAngle() + "rad)";
     }
     dispose() {
         this.htmlElement.remove()
@@ -17,7 +24,7 @@ class Entity {
 
 class Arrow extends Entity {
 
-    constructor(public htmlElement : HTMLElement, public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
+    constructor(public htmlElement: HTMLElement, public x: number, public y: number, public orientation: Direction, protected game_width: number, protected game_height: number) {
         super(htmlElement, "yellow", x, y, 20, 20, orientation, 0.3, game_width, game_height)
     }
 
@@ -86,7 +93,7 @@ class Player extends Entity {
         this.y = Math.floor(Math.random() * game_height)
     }
 
-    fireArrow(arrowHtmlElement: HTMLElement) : Arrow {
+    fireArrow(arrowHtmlElement: HTMLElement): Arrow {
         let offset: Vector
         switch (this.last_direction) {
             case (Direction.Left):

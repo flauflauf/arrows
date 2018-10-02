@@ -17,13 +17,26 @@ class Vector {
     multiply(scalarFactor: number) {
         return new Vector(this.x * scalarFactor, this.y * scalarFactor)
     }
-    normalize() : Vector {
+    normalize(): Vector {
         let norm = this.norm()
         return norm === 0 ? this : this.multiply(1 / norm)
     }
-    norm() : number {
+    norm(): number {
         let norm = Math.sqrt(this.x * this.x + this.y * this.y)
         console.log("norm: " + norm);
         return norm
+    }
+    angle(): number {
+        let otherVector = new Vector(0, -1)
+
+        let x1 = this.x
+        let y1 = this.y
+        let x2 = otherVector.x
+        let y2 = otherVector.y
+
+        let scalarProduct = x1 * x2 + y1 * y2;
+        let determinant = x1 * y2 - y1 * x2
+        let angle = Math.atan2(determinant, scalarProduct)
+        return angle
     }
 }
